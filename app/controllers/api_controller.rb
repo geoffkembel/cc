@@ -28,7 +28,7 @@ class ApiController < ApplicationController
       file = files.find(filename)
       file.content.split(/\r?\n/).each do |line|
         key, value = line.split("\t")
-        lines << { :f => filename, :k => trim(key), :v => trim(value) }
+        lines << { :filename => filename, :key => trim(key), :value => trim(value) }
       end
     end
     lines
