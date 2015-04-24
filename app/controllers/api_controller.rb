@@ -33,10 +33,15 @@ class ApiController < ApplicationController
     end
     lines
   end
-  
+ 
   def query
-    files = get_files_from_s3()
-    lines = read_files_into_line_objects(files)
-    render :json => lines
+    begin
+      files = get_files_from_s3()
+      lines = read_files_into_line_objects(files)
+      render :json => lines, status: :ok
+    rescue => e
+      error = { :status => 500, :message => "Internal server error" }
+      render :json => error.to_json(), status: :internal_server_error
+    end
   end
 end
