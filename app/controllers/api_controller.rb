@@ -74,8 +74,6 @@ class ApiController < ApplicationController
   def validate_and_normalize_sort(sort)
     # validate sort has only f, k, and v characters
     raise Exceptions::InvalidSort unless sort =~ /^[fkv]*$/
-    # set default if empty
-    sort = DEFAULT_SORT if sort.empty?()
     # append default sort to fill in any unspecified letters in the right order
     sort += DEFAULT_SORT
     # reduce a sort that has any letter more than once (e.g. fkvvkf => fkv) to
