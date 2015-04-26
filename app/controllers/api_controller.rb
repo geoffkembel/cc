@@ -5,7 +5,7 @@ class ApiController < ApplicationController
 
   DEFAULT_SORT = "fkv"
 
-  # query endpoint
+  # query action
   def query
     begin
       lines = get_lines_from_s3_files()
@@ -19,6 +19,9 @@ class ApiController < ApplicationController
       render_error(500, "Unknown server error")
     end
   end
+
+  # all other methods are private
+  private
 
   # cacheable method that fetches lines from s3 files
   def get_lines_from_s3_files
@@ -39,7 +42,7 @@ class ApiController < ApplicationController
   end
 
   # return array of line objects from array of s3 file objects
-  # [{ "f": "claims_to_fame.txt", "k": "Maroon 5", "v": "lameness" }, ... ]
+  # [{ "filename": "opposites.txt", "key": "Led Zeppelin", "value": "lameness" }, ... ]
   def get_lines_from_files(files)
     lines = []
     files.each do |f|
@@ -57,16 +60,18 @@ class ApiController < ApplicationController
     lines
   end
 
-  # trim an object: strip a string, ignore otherwise
+  # trim an object: strip a string, ignore otherwise (like nil)
   def trim(v)
     v.respond_to?('strip') ? v.strip : v
   end
 
   # sort line objects based on a sort specified on the query string
   def sort_lines(lines)
-    # get sort from the query string, else defaut to "fkv"
+    # get sort from the query string, else default
     sort = (request.GET.has_key?("sort")) ? request.GET["sort"] : DEFAULT_SORT
     normalized_sort = validate_and_normalize_sort(sort)
+    # sort array of objects by multiple fields
+    # http://alvinalexander.com/blog/post/ruby/how-sort-ruby-array-objects-multiple-class-fields-attributes
     lines.sort_by { |obj| get_array_for_sort_by(obj, normalized_sort) }
   end
 
@@ -113,4 +118,3 @@ class ApiController < ApplicationController
   end
 
 end
-
