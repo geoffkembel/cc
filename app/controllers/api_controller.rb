@@ -1,7 +1,7 @@
 class ApiController < ApplicationController
   
-  # https://github.com/qoobaa/s3
-  require "s3"
+  require "s3" # https://github.com/qoobaa/s3
+  require "exceptions" # lib/exceptions.rb
   
   DEFAULT_SORT = "fkv"
   
@@ -40,7 +40,7 @@ class ApiController < ApplicationController
   # validate a sort value and normalize it to have one of each of the letters
   def validate_and_normalize_sort(sort)
     # validate sort has only f, k, and v characters
-    raise ArgumentError unless sort =~ /^[fkv]*$/
+    raise Exceptions::InvalidSort unless sort =~ /^[fkv]*$/
     # set default if empty
     sort = DEFAULT_SORT if sort.empty?()
     # append default sort to fill in any unspecified letters in the right order
@@ -96,7 +96,7 @@ class ApiController < ApplicationController
       lines = read_files_into_line_objects(files)
       sorted_lines = sort_lines(lines)
       render :json => sorted_lines, status: :ok
-    rescue ArgumentError
+    rescue Exceptions::InvalidSort
       message = "Invalid sort value. Please specify a string of length zero "\
                 "or greater consisting of only the characters f, k and v"
       render_error(400, message)
