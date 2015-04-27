@@ -13,8 +13,12 @@ class ApiController < ApplicationController
       render :json => sorted_lines, status: :ok
     rescue Exceptions::InvalidSort
       message = "Invalid sort value. Please specify a string of length zero "\
-                "or greater consisting of only the characters f, k and v"
+                "or greater consisting of only the characters f, k and v."
       render_error(400, message)
+    rescue Exceptions::Maroon5IsntThatLame
+      message = "They've got some catchy songs and Adam Levine seems like a "\
+                "pretty nice guy, if you can judge anything from The Voice."
+      render_error(418, message)
     rescue Exception
       render_error(500, "Unknown server error")
     end
@@ -77,6 +81,8 @@ class ApiController < ApplicationController
 
   # validate a sort value and normalize it to have one of each of the letters
   def validate_and_normalize_sort(sort)
+    # Maroon 5 isn't THAT lame
+    raise Exceptions::Maroon5IsntThatLame if sort === "maroon5"
     # validate sort has only f, k, and v characters
     raise Exceptions::InvalidSort unless sort =~ /^[fkv]*$/
     # append default sort to fill in any unspecified letters in the right order

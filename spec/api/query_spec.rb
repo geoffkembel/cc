@@ -45,6 +45,13 @@ describe "Api#query", :type => :request do
     end
   end
 
+  describe 'not lame sort' do
+    it "returns 418" do
+      get 'query', { :sort => "maroon5" }
+      expect(response.status).to eq(418)
+    end
+  end
+
   describe 'empty sort' do
     it "returns fkv" do
       get 'query', { :sort => "" }
